@@ -58,7 +58,7 @@ Instala PyTorch con el comando que indica <https://pytorch.org/get-started/local
 pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cuXXX
 ```
 
-> PyTorch no está en `requirements.txt` porque su comando de instalación depende de la versión de CUDA de cada máquina.
+> **Instala PyTorch antes que el resto.** Si no, `timm` lo trae como dependencia y pip descarga la versión por defecto, con varios GB de librerías CUDA que pueden no coincidir con tu configuración. Tampoco está en `requirements.txt`, porque el comando depende de la versión de CUDA de cada máquina.
 
 Después, instala el resto de dependencias:
 
