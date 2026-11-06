@@ -147,7 +147,8 @@ with col_result:
 m1, m2, m3, m4 = st.columns(4)
 m1.metric("Objetos detectados", len(detections))
 m2.metric("Tiempo de inferencia", f"{result['inference_ms']:.0f} ms")
-m3.metric("Dispositivo", "GPU (CUDA)" if result["device"] == "cuda" else "CPU")
+precision = result["precision"].upper()
+m3.metric("Dispositivo", f"GPU (CUDA) · {precision}" if result["device"] == "cuda" else f"CPU · {precision}")
 m4.metric("Resolución", f"{result['image_width']}×{result['image_height']}")
 
 # ---------- Tabla ----------

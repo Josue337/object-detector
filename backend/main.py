@@ -1,12 +1,17 @@
 import io
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from PIL import Image, UnidentifiedImageError
 from pydantic import BaseModel
 
-from detector import ObjectDetector
+from detector import GPUOutOfMemoryError, ObjectDetector
 
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+logger = logging.getLogger("api")
+
+MAX_PIXELS = 50_000_000  # 50 megapíxeles
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
@@ -31,6 +36,7 @@ class Detection(BaseModel):
 
 class DetectionResponse(BaseModel):
     device: str
+    precision: str
     inference_ms: float
     image_width: int
     image_height: int
@@ -43,6 +49,7 @@ def health():
     return {
         "status": "ok" if detector else "loading",
         "device": detector.device if detector else None,
+        "precision": detector.precision if detector else None,
     }
 
 
@@ -61,10 +68,22 @@ def detect(
     try:
         image = Image.open(io.BytesIO(data))
         image.load()
-    except (UnidentifiedImageError, OSError):
+    except (UnidentifiedImageError, OSError, Image.DecompressionBombError):
         raise HTTPException(status_code=400, detail="El archivo no es una imagen válida.")
 
-    result = ml["detector"].detect(image, threshold=threshold)
+    if image.width * image.height > MAX_PIXELS:
+        raise HTTPException(status_code=413, detail="La imagen tiene demasiados píxeles (máximo 50 MP).")
+
+    try:
+        result = ml["detector"].detect(image, threshold=threshold)
+    except GPUOutOfMemoryError:
+        logger.error("GPU sin memoria al procesar %s", file.filename)
+        raise HTTPException(status_code=503, detail="La GPU se quedó sin memoria. Intenta con una imagen más pequeña.")
+    except Exception:
+        logger.exception("Error inesperado durante la inferencia")
+        raise HTTPException(status_code=500, detail="Error interno al procesar la imagen.")
+
+    logger.info("%s: %d objetos en %.1f ms", file.filename, len(result["detections"]), result["inference_ms"])
     return DetectionResponse(
         **result, image_width=image.width, image_height=image.height
     )
