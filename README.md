@@ -2,6 +2,11 @@
 
 Aplicación web que detecta objetos en imágenes usando un modelo de Hugging Face (DETR ResNet-50) acelerado con CUDA. El usuario sube una imagen o toma una foto con la cámara, y la interfaz muestra los objetos detectados con sus cajas, su porcentaje de confianza, el tiempo de inferencia y el dispositivo utilizado (GPU o CPU).
 
+## Autores
+
+- Josue Santiago Bustamante Luna
+- Juan David Guzman Perez
+
 ## Características
 
 - Subida de imágenes (JPEG, PNG, WebP) o captura desde la cámara del navegador.
@@ -45,7 +50,7 @@ Python · PyTorch · Hugging Face Transformers · timm · FastAPI · Uvicorn · 
 ## Instalación
 
 ```bash
-git clone <URL-DEL-REPOSITORIO>
+git clone https://github.com/Josue337/object-detector.git
 cd object_detector
 
 python3 -m venv .venv
