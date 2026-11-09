@@ -207,3 +207,11 @@ object_detector/
 - Autenticación y límite de peticiones para uso público.
 - Procesamiento de vídeo en tiempo real.
 - Comparar con otros modelos (YOLOS, RT-DETR).
+## Licencia
+
+Este proyecto se distribuye bajo la licencia MIT (ver `LICENSE`). El modelo DETR ResNet-50 es de AI at Meta y tiene su propia licencia, Apache 2.0.
+
+## Autores
+
+- Josue Santiago Bustamante Luna
+- Juan David Guzman Perez
