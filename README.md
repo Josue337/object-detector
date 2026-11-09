@@ -165,10 +165,11 @@ Ejemplo: `USE_FP16=0 uvicorn main:app --port 8000`
 
 Medido en una NVIDIA GeForce RTX 4050 Laptop (6 GB), con una imagen de 640×480, como media de 30 ejecuciones. El tiempo es el de la red en GPU y no incluye el pre y postprocesamiento, que se hacen en CPU.
 
-| Precisión | Tiempo medio | VRAM pico |
+| Dispositivo y precisión | Tiempo medio | VRAM pico |
 |---|---|---|
-| FP32 | 58.4 ms | 401 MB |
-| **FP16** | **32.4 ms** | **203 MB** |
+| CPU (FP32) | 997.5 ms | no aplica |
+| GPU CUDA (FP32) | 57.0 ms | 401 MB |
+| **GPU CUDA (FP16)** | **30.7 ms** | **203 MB** |
 
 Con FP16 las detecciones y sus confianzas coinciden con las de FP32 hasta el cuarto decimal. La primera petición tras arrancar el servidor es algo más lenta (~250 ms) por la inicialización de recursos de CUDA.
 
